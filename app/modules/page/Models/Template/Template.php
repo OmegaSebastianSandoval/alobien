@@ -18,86 +18,59 @@ class Page_Model_Template_Template
 
 		$contenidoModel = new Page_Model_DbTable_Contenido();
 		$contenidos = [];
-		$rescontenidos = $contenidoModel->getList("contenido_estado='1' AND contenido_seccion = '$seccion' AND contenido_padre = '0' ", "orden ASC");
+		// Obtener contenidos principales de la sección
+		$rescontenidos = $contenidoModel->getList(
+			"contenido_estado='1' AND contenido_seccion = '$seccion' AND contenido_padre = '0'", 
+			"orden ASC"
+		);
+		
 		foreach ($rescontenidos as $key => $contenido) {
-			$contenidos[$key] = [];
-			$contenidos[$key]['detalle'] = $contenido;
-			$padre = $contenido->contenido_id;
-			$hijos = $contenidoModel->getList("contenido_estado='1' AND contenido_padre = '$padre' ", "orden ASC");
-			foreach ($hijos as $key2 => $hijo) {
-				$padre = $hijo->contenido_id;
-				$contenidos[$key]['hijos'][$key2] = [];
-				$contenidos[$key]['hijos'][$key2]['detalle'] = $hijo;
-				$nietos = $contenidoModel->getList("contenido_padre = '$padre' ", "orden ASC");
-				if ($nietos) {
-					$contenidos[$key]['hijos'][$key2]['hijos'] = $nietos;
-					foreach ($nietos as $key3 => $subnietos) {
-						$padre = $subnietos->contenido_id;
-
-						$contenidos[$key]['hijos'][$key2]['hijos'][$key3] = [];
-						$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['nietos'] = $subnietos;
-						$subnietos2 = $contenidoModel->getList("contenido_padre = '$padre' AND contenido_estado = '1'", "orden ASC");
-
-						if ($subnietos2) {
-							$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['subnietos'] = $subnietos2;
-							//documentos y carpetas nivel3
-							foreach ($subnietos2 as $key4 => $subsubnietos) {
-
-								$padre = $subsubnietos->contenido_id;
-								$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['subnietos'][$key4] = [];
-								$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['detalle'][$key4]['subsubnietos'] = $subsubnietos;
-								$subsubnietos2 = $contenidoModel->getList("contenido_padre = '$padre' AND contenido_estado = '1'", "orden ASC");
-
-								$contenidos['hijos_' . $padre] = $subsubnietos2;
-
-								if ($subsubnietos2) {
-									$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['subnietos'][$key4]['subsubnietos'] = $subsubnietos2;
-									//documentos y carpetas nivel4
-									foreach ($subsubnietos2 as $key5 => $bisnietos) {
-										$padre = $bisnietos->contenido_id;
-										$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['subsubnietos'][$key5] = [];
-										$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['detalle'][$key5]['bisnietos'] = $bisnietos;
-										$bisnietos = $contenidoModel->getList("contenido_padre = '$padre' AND contenido_estado = '1'", "orden ASC");
-
-										$contenidos['hijos_' . $padre] = $bisnietos;
-
-										if ($bisnietos) {
-											//documentos y carpetas nivel5
-											$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['subsubnietos'][$key5]['bisnietos'] = $bisnietos;
-
-
-											foreach ($bisnietos as $key6 => $bisnietos2) {
-												$padre = $bisnietos2->contenido_id;
-												$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['subsubnietos'][$key5]['bisnietos'][$key6] = [];
-												$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['subsubnietos'][$key5]['bisnietos']['detalle'][$key6]['bisnietos2'] = $bisnietos2;
-												$bisnietos2 = $contenidoModel->getList("contenido_padre = '$padre' AND contenido_estado = '1'", "orden ASC");
-
-												$contenidos['hijos_' . $padre] = $bisnietos2;
-
-												if ($bisnietos2) {
-													//documentos y carpetas nivel6
-													$contenidos[$key]['hijos'][$key2]['hijos'][$key3]['hijos'][$key4]['subsubnietos'][$key5]['bisnietos'][$key6]['bisnietos2'] = $bisnietos2;
-
-
-													foreach ($bisnietos2 as $key7 => $bisnietos3) {
-														$padre = $bisnietos3->contenido_id;
-														$bisnietos3 = $contenidoModel->getList("contenido_padre = '$padre' AND contenido_estado = '1'", "orden ASC");
-														$contenidos['hijos_' . $padre] = $bisnietos3;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			$contenidos[$key] = [
+				'detalle' => $contenido,
+				'hijos' => $this->buildContentHierarchy($contenidoModel, $contenido->contenido_id, 1)
+			];
 		}
 		$this->_view->contenidos = $contenidos;
 		return $this->_view->getRoutPHP("modules/page/Views/template/contenedor.php");
 	}
+
+	/**
+	 * Construye la jerarquía de contenidos de forma recursiva
+	 * @param object $contenidoModel Modelo de contenido
+	 * @param string $padreId ID del contenido padre
+	 * @param int $nivel Nivel actual de profundidad (para control de recursión)
+	 * @param int $maxNivel Nivel máximo permitido (por defecto 6)
+	 * @return array Estructura jerárquica de contenidos
+	 */
+	private function buildContentHierarchy($contenidoModel, $padreId, $nivel = 1, $maxNivel = 6)
+	{
+		// Prevenir recursión infinita
+		if ($nivel > $maxNivel) {
+			return [];
+		}
+
+		$hijos = $contenidoModel->getList(
+			"contenido_estado='1' AND contenido_padre = '$padreId'", 
+			"orden ASC"
+		);
+
+		if (empty($hijos)) {
+			return [];
+		}
+
+		$estructura = [];
+		foreach ($hijos as $key => $hijo) {
+			$estructura[$key] = [
+				'detalle' => $hijo,
+				'hijos' => $this->buildContentHierarchy($contenidoModel, $hijo->contenido_id, $nivel + 1, $maxNivel)
+			];
+			// Mantener compatibilidad con el array plano para niveles específicos
+			$this->_view->contenidos['hijos_' . $hijo->contenido_id] = $estructura[$key]['hijos'];
+		}
+
+		return $estructura;
+	}
+
 	public function bannerPrincipalInd($seccion)
 	{
 		$this->_view->seccionbanner = $seccion;

@@ -1,3 +1,4 @@
+
 <?php foreach ($this->contenidos as $key => $rescontenido): ?>
 	<?php $contenedor = $rescontenido['detalle']; ?>
 	<?php if($contenedor->contenido_tipo == 1 ){ ?>

@@ -1,61 +1,66 @@
 <div data-aos="" class="row mt-4 slider-<?php echo $columna->contenido_id; ?>">
-  <?php
-  // print_r($columna);
-  if ($columna->contenido_titulo_ver == 1) {
-    echo '<h2>' . $columna->contenido_titulo . '</h2>';
-  }
-  ?>
+  <?php if ($columna->contenido_titulo_ver == 1): ?>
+    <h2><?php echo htmlspecialchars($columna->contenido_titulo); ?></h2>
+  <?php endif; ?>
+  
   <?php echo $columna->contenido_descripcion; ?>
+  
   <div id="slider_<?php echo $columna->contenido_id; ?>"
-    class="slider_<?php echo $columna->contenido_id; ?> col-sm-12 sliderCont w-100 ">
+       class="slider_<?php echo $columna->contenido_id; ?> col-sm-12 sliderCont w-100">
     <?php foreach ($slidercontent as $slider): ?>
-      <?php $slider = $slider["nietos"];
-      // print_r($slider->contenido_descripcion);
+      <?php 
+      // Adaptar a la nueva estructura jerárquica
+      $slider = $slider["detalle"];
+      $hasLink = !empty($slider->contenido_enlace);
+      $hasImage = !empty($slider->contenido_imagen);
+      $hasDescription = !empty($slider->contenido_descripcion);
+      $hasIntroduction = !empty($slider->contenido_introduccion);
+      $showTitle = ($slider->contenido_titulo_ver == 1);
+      $linkTarget = ($slider->contenido_enlace_abrir == '1') ? '_blank' : '_self';
       ?>
 
       <div class="itemSlider itemSlider_<?php echo $columna->contenido_id; ?>">
+        
+        <?php if ($hasLink): ?>
+          <a href="<?php echo htmlspecialchars($slider->contenido_enlace); ?>" 
+             target="<?php echo $linkTarget; ?>">
+        <?php endif; ?>
+        
+        <!-- Imagen del slider -->
+        <?php if ($hasImage): ?>
+          <img class="img-slider" 
+               src="/images/<?php echo htmlspecialchars($slider->contenido_imagen); ?>"
+               alt="<?php echo htmlspecialchars($slider->contenido_titulo); ?>">
+        <?php else: ?>
+          <img class="img-slider" 
+               src="/assets/pic7.jpg" 
+               alt="<?php echo htmlspecialchars($slider->contenido_titulo); ?>">
+        <?php endif; ?>
+        
+        <!-- Contenido del slider -->
+        <div class="content-slider content-slider_<?php echo $columna->contenido_id; ?>">
+          
+          <?php if ($hasDescription): ?>
+            <div class="descripcion-slider">
+              <?php echo $slider->contenido_descripcion; ?>
+            </div>
+          <?php endif; ?>
 
-        <?php if ($slider->contenido_enlace) { ?>
-          <a href="<?php echo $slider->contenido_enlace ?>" <?php if ($slider->contenido_enlace_abrir == '1') {
-               echo 'target="_blank"';
-             } ?>>
-          <?php } ?>
-          <?php if ($slider->contenido_imagen) { ?>
+          <?php if ($showTitle): ?>
+            <h3><?php echo htmlspecialchars($slider->contenido_titulo); ?></h3>
+          <?php endif; ?>
 
-            <img class="img-slider" src="/images/<?php echo $slider->contenido_imagen; ?>"
-              alt="<?php echo $slider->contenido_titulo; ?>">
-          <?php } else { ?>
-            <img class="img-slider" src="/assets/pic7.jpg" alt="<?php echo $slider->contenido_titulo; ?>">
+          <?php if ($hasIntroduction): ?>
+            <div class="introduccion-slider">
+              <?php echo $slider->contenido_introduccion; ?>
+            </div>
+          <?php endif; ?>
+          
+        </div>
 
-          <?php } ?>
-          <div class="content-slider content-slider_<?php echo $columna->contenido_id; ?>">
-
-
-
-            <?php if ($slider->contenido_descripcion != '') { ?>
-              <div class="descripcion-slider">
-
-                <?php echo $slider->contenido_descripcion; ?>
-              </div>
-            <?php } ?>
-
-            <?php if ($slider->contenido_titulo_ver == 1) {
-              echo '<h3>' . $slider->contenido_titulo . '</h3>';
-            } ?>
-
-            <?php if ($slider->contenido_introduccion != '') { ?>
-              <div class="introduccion-slider">
-
-                <?php echo $slider->contenido_introduccion; ?>
-              </div>
-            <?php } ?>
-          </div>
-
-
-          <?php if ($slider->contenido_enlace) { ?>
-
+        <?php if ($hasLink): ?>
           </a>
-        <?php } ?>
+        <?php endif; ?>
 
       </div>
     <?php endforeach; ?>
@@ -63,62 +68,73 @@
 </div>
 
 <script>
-  // console.log(<?php echo $columna->contenido_id; ?>);
-
-  $('#slider_<?php echo $columna->contenido_id; ?>').slick({
+$(document).ready(function() {
+  
+  // Configuración del slider
+  const sliderId = '#slider_<?php echo $columna->contenido_id; ?>';
+  const isSpecialSlider = (<?php echo $columna->contenido_id; ?> === 23);
+  
+  // Configuración básica del slider
+  const sliderConfig = {
     infinity: false,
-    slidesToShow: <?php echo $columna->contenido_id == 23 ? 2 : 7 ?>,
+    slidesToShow: isSpecialSlider ? 2 : 7,
     slidesToScroll: 1,
     autoplay: false,
     autoplaySpeed: 2000,
-    dots: <?php echo $columna->contenido_id == 23 ? 'false' : 'false' ?>,
-    arrows: <?php echo $columna->contenido_id == 23 ? 'true' : 'true' ?>,
-
-    responsive: [{
-      breakpoint: 1200,
-      settings: {
-        infinity: false,
-
-        slidesToShow: <?php echo $columna->contenido_id == 23 ? 1 : 3 ?>,
-        slidesToScroll: 1,
-        dots: <?php echo $columna->contenido_id == 23 ? 'false' : 'false' ?>,
-        arrows: true
+    dots: false,
+    arrows: true,
+    
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          infinity: false,
+          slidesToShow: isSpecialSlider ? 1 : 3,
+          slidesToScroll: 1,
+          dots: false,
+          arrows: true
+        }
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: isSpecialSlider ? 1 : 2,
+          slidesToScroll: 1,
+          dots: true,
+          arrows: false
+        }
+      },
+      {
+        breakpoint: 770,
+        settings: {
+          slidesToShow: isSpecialSlider ? 1 : 2,
+          slidesToScroll: 1,
+          dots: true,
+          arrows: false
+        }
       }
-    },
-    {
-      breakpoint: 900,
-      settings: {
-        slidesToShow: <?php echo $columna->contenido_id == 23 ? 1 : 2 ?>,
-        slidesToScroll: 1,
-        dots: <?php echo $columna->contenido_id == 23 ? 'true' : 'true' ?>,
-        arrows: false
-      }
-    },
-    {
-      breakpoint: 770,
-      settings: {
-        slidesToShow: <?php echo $columna->contenido_id == 23 ? 1 : 2 ?>,
-        slidesToScroll: 1,
-        dots: <?php echo $columna->contenido_id == 23 ? 'true' : 'true' ?>,
-        arrows: false
-      }
-    },
     ]
-  });
-  $(document).ready(function () {
-    // Verificar si la resolución es mayor o igual a 765px
-    if (window.innerWidth <= 765) {
-      // Al cargar la página, agregar la clase a los slides visibles
-      $('.slider_18 div.slick-active .content-slider').addClass('content-slider_18');
-
-      // Escuchar el evento afterChange para cuando se cambien los slides
-      $('.slider_18').on('afterChange', function (event, slick, currentSlide) {
-        // Remover la clase 'content-slider_18' de todos los divs .content-slider
-        $('.slider_18 div .content-slider').removeClass('content-slider_18');
-
-        // Añadir la clase 'content-slider_18' solo a los slides visibles
-        $('.slider_18 div.slick-active .content-slider').addClass('content-slider_18');
-      });
-    }
-  })
+  };
+  
+  // Inicializar slider
+  $(sliderId).slick(sliderConfig);
+  
+  // Funcionalidad específica para slider_18 en dispositivos móviles
+  if (window.innerWidth <= 765) {
+    const slider18 = $('.slider_18');
+    
+    // Agregar clase inicial a slides visibles
+    slider18.find('div.slick-active .content-slider').addClass('content-slider_18');
+    
+    // Manejar cambios de slide
+    slider18.on('afterChange', function(event, slick, currentSlide) {
+      // Remover clase de todos los slides
+      slider18.find('div .content-slider').removeClass('content-slider_18');
+      
+      // Añadir clase solo a slides visibles
+      slider18.find('div.slick-active .content-slider').addClass('content-slider_18');
+    });
+  }
+  
+});
 </script>

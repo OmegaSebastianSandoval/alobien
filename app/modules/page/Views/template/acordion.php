@@ -1,5 +1,6 @@
 <div class="accordion " id="accordion<?php echo $columna->contenido_id; ?>">
-	<?php foreach ($acordioncontent as $key3 => $acordion): ?>
+	<?php foreach ($acordioncontent as $key3 => $acordionItem): ?>
+		<?php $acordion = $acordionItem['detalle']; ?>
 		<div class="card w-100">
 			<div class="card-header" id="heading<?php echo $acordion->contenido_id; ?>" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $acordion->contenido_id; ?>" <?php if ($key3 == 0) { ?> aria-expanded="true" <?php } ?> aria-controls="collapse<?php echo $acordion->contenido_id; ?>">
 				<?php if ($acordion->contenido_imagen) { ?>

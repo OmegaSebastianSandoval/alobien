@@ -5,7 +5,8 @@
 
 			<ul>
 				<?php $colorfondo = $columna->contenido_fondo_color; ?>
-				<?php foreach ($carrousel as $key => $contenido) : ?>
+				<?php foreach ($carrousel as $key => $contenidoItem) : ?>
+					<?php $contenido = $contenidoItem['detalle']; ?>
 					<li>
 
 						<?php include($disenio); ?>
