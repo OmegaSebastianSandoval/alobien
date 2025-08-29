@@ -1,10 +1,10 @@
 <div class="caja-contenido-simple design-four four-<?php echo $contenido->contenido_id ?>" style="background-color: <?php if ($contenido->contenido_fondo_color) {
-																																																											echo $contenido->contenido_fondo_color;
-																																																										} else if ($colorfondo) {
-																																																											echo $colorfondo;
-																																																										} ?> <?php if ($contenido->contenido_borde == '1') {
-					echo '; border: 2px solid #13436B; border-radius:20px; padding: 0 !important; overflow: hidden; ';
-				} ?>">
+																														echo $contenido->contenido_fondo_color;
+																													} else if ($colorfondo) {
+																														echo $colorfondo;
+																													} ?> <?php if ($contenido->contenido_borde == '1') {
+																																																													echo '; border: 2px solid #13436B; border-radius:20px; padding: 0 !important; overflow: hidden; ';
+																																																												} ?>">
 
 	<?php if ($contenido->contenido_imagen) { ?>
 		<div class="imagen-contenido">
@@ -17,8 +17,8 @@
 	<?php } ?>
 
 	<div class="descripcion" style="<?php if ($contenido->contenido_borde == '1') {
-																		echo 'padding: 10px; ';
-																	} ?>">
+										echo 'padding: 10px; ';
+									} ?>">
 		<?php echo $contenido->contenido_descripcion; ?>
 	</div>
 

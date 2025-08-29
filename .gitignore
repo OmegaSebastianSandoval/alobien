@@ -10,5 +10,6 @@ package-lock.json
 package.json
 public/public.zip
 sql
+vendor/
 
 

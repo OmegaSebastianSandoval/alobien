@@ -23,7 +23,7 @@ $config ['staging']['db']['engine'] ='mysql';
 
 $config ['development']= array();
 $config ['development']['db'] = array();
-$config ['development']['db']['host'] ='localhost';
+$config ['development']['db']['host'] ='127.0.0.1';
 $config ['development']['db']['name'] ='alobien';
 $config ['development']['db']['user'] ='root';
 $config ['development']['db']['password'] = '';

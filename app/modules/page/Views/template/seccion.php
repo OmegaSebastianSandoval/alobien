@@ -6,7 +6,7 @@
 	style="background-image:url(/images/<?php echo $contenedor->contenido_fondo_imagen; ?>);   background-size: cover; background-color:<?php echo $contenedor->contenido_fondo_color; ?> ;">
 	<div class="content-box container">
 		<?php if ($contenedor->contenido_titulo_ver == 1) { ?>
-			<h2><?php echo $contenedor->contenido_titulo; ?></h2>
+			<h2><?php echo $this->len[$contenedor->contenido_titulo] ?? $contenedor->contenido_titulo; ?></h2>
 		<?php } ?>
 		<?php if ($contenedor->contenido_introduccion != "") { ?>
 			<div class="descripcion-seccion"><?php echo $contenedor->contenido_introduccion; ?></div>

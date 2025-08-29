@@ -1,6 +1,6 @@
 <?php
 
-$lang = [
+$lang = array(
     "our_services" => "Nuestros Servicios",
     "main_title" => "Página de Inicio",
     "contact_form" => "Formulario de Contacto",
@@ -38,7 +38,10 @@ $lang = [
     "contact_us_footer" => "Contáctanos",
     "all_rights_reserved" => "Todos los Derechos Reservados",
     "designed_by" => "Diseñado por",
-];
+    'NUESTRO PRESTIGIO ES IMPECABLE' => 'NUESTRO PRESTIGIO ES IMPECABLE',
+    'BENEFITS' => 'BENEFICIOS',
+    'OUR CLIENTS' => 'NUESTROS CLIENTES'
+);
 
 return $lang;
 ?>
