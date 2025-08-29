@@ -17,7 +17,7 @@ class Page_mainController extends Controllers_Abstract
 	public function init()
 	{
 		// Usar la misma lógica de idioma que en bootstrap.php
-		$lang_selected = 'es';
+		$lang_selected = 'en';
 		
 		// Verificar si se está cambiando el idioma
 		if(isset($_GET['lang'])){

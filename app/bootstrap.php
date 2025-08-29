@@ -14,7 +14,7 @@ define('PUBLIC_PATH', APP_PATH . "../public/");
 date_default_timezone_set('America/Bogota');
 
 // Establecer idioma por defecto
-$selected_lang = 'es';
+$selected_lang = 'en';
 
 // Verificar si se está cambiando el idioma
 if(isset($_GET['lang'])){

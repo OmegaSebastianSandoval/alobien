@@ -58,7 +58,7 @@
   <!-- Recaptcha -->
   <?php 
     // Obtener el idioma actual para reCAPTCHA
-    $lang_selected = 'es';
+    $lang_selected = 'en';
     if(isset($_GET['lang'])){
       $lang_selected = $_GET['lang'];
     } else if (isset($_COOKIE['user_lang'])) {
